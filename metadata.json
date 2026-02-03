@@ -1,0 +1,7 @@
+{
+  "name": "VoiceShield AI Detection API Portal",
+  "description": "A production-ready developer portal and testing sandbox for the AI-Generated Voice Detection API, featuring live detection using Gemini AI and comprehensive documentation.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
