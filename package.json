@@ -3,12 +3,23 @@
   "name": "voiceshield-ai-portal",
   "version": "1.1.0",
   "private": true,
+  "type": "module",
   "description": "Production-ready VoiceShield AI Detection API Portal and Sandbox",
   "scripts": {
-    "start": "npx serve .",
-    "build": "echo 'Static ESM deployment - no build required' && exit 0"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "serve": "^14.2.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "@google/genai": "^1.39.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0",
+    "typescript": "^5.7.0"
   }
 }

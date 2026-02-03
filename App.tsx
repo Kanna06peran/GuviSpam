@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { AppTab } from './types';
-import Documentation from './components/Documentation';
-import Sandbox from './components/Sandbox';
-import BackendImplementation from './components/BackendImplementation';
+import { AppTab } from './types.ts';
+import Documentation from './components/Documentation.tsx';
+import Sandbox from './components/Sandbox.tsx';
+import BackendImplementation from './components/BackendImplementation.tsx';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.OVERVIEW);

@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { detectVoice } from '../services/geminiService';
-import { DetectionRequest, DetectionResponse, AudioFormat } from '../types';
+import { detectVoice } from '../services/geminiService.ts';
+import { DetectionRequest, DetectionResponse, AudioFormat } from '../types.ts';
 
 const Sandbox: React.FC = () => {
   const [language, setLanguage] = useState('en-US');
