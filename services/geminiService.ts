@@ -8,8 +8,18 @@ export const detectVoice = async (request: DetectionRequest): Promise<DetectionR
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
-    const mimeType = request.audio_format === 'mp3' ? 'audio/mpeg' : 'audio/wav';
+    // Determine MIME type based on format or provided type
+    let mimeType = 'audio/mpeg';
+    if (request.audio_format === 'wav') mimeType = 'audio/wav';
+    if (request.audio_base64.startsWith('data:')) {
+      // If it's a data URI, extract the mime type
+      const match = request.audio_base64.match(/^data:([^;]+);base64,/);
+      if (match) mimeType = match[1];
+    }
     
+    // Clean base64 data if it contains a prefix
+    const base64Data = request.audio_base64.replace(/^data:[^;]+;base64,/, '');
+
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
       contents: [
@@ -17,23 +27,30 @@ export const detectVoice = async (request: DetectionRequest): Promise<DetectionR
           parts: [
             {
               inlineData: {
-                data: request.audio_base64,
+                data: base64Data,
                 mimeType: mimeType
               }
             },
             {
-              text: `Analyze the provided audio sample carefully for signs of AI generation.
-              Focus on detecting Text-to-Speech (TTS) artifacts, spectral inconsistencies, robotic cadence, or unnatural prosody.
+              text: `SYSTEM ROLE: Forensic Audio Analyst
+              TASK: Determine if the provided audio is AI-GENERATED (TTS/Voice Clone) or HUMAN.
               
-              The primary language context is: ${request.language}. 
-              If the language is Telugu or Malayalam, pay close attention to the natural flow of retroflex consonants and vowel elongations which are often flattened in synthetic models.
+              CONTEXT: 
+              - Language: ${request.language}
+              - Focus: Look for "robotic" cadence, lack of emotional micro-fluctuations, and spectral discontinuities.
               
-              You MUST respond with a valid JSON object matching this schema:
+              REGIONAL ANALYSIS (CRITICAL):
+              If the language is Telugu (te-IN) or Malayalam (ml-IN), specifically examine:
+              1. Retroflex Consonants (ట, డ, ణ / ട, ഡ, ണ): Synthetic voices often fail to produce the distinct 'tongue curl' acoustics.
+              2. Vowel Sandhi: Check for natural fluid transitions between words.
+              3. Aspirated sounds: AI often makes these too uniform or skips the breathy quality.
+
+              OUTPUT: You MUST respond with a valid JSON object.
               {
                 "prediction": "AI_GENERATED" | "HUMAN",
-                "confidence": number (between 0 and 1),
-                "reasoning": "Brief explanation focused on acoustic artifacts or natural vocal traits found",
-                "detected_language": "The specific language detected (e.g., Telugu, Malayalam, English)"
+                "confidence": number (0-1),
+                "reasoning": "Explain acoustic markers found",
+                "detected_language": "Specific locale found"
               }`
             }
           ]
@@ -71,7 +88,7 @@ export const detectVoice = async (request: DetectionRequest): Promise<DetectionR
       status: 'error',
       prediction: 'HUMAN',
       confidence: 0,
-      message: error instanceof Error ? error.message : "Failed to process audio analysis."
+      message: error instanceof Error ? error.message : "Failed to analyze audio sample."
     };
   }
 };
