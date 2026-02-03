@@ -4,22 +4,11 @@
   "version": "1.1.0",
   "private": true,
   "description": "Production-ready VoiceShield AI Detection API Portal and Sandbox",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
-  },
   "scripts": {
     "start": "npx serve .",
-    "build": "echo 'Static deployment'"
+    "build": "echo 'Static ESM deployment - no build required' && exit 0"
   },
   "dependencies": {
     "serve": "^14.2.0"
-  },
-  "keywords": [
-    "ai",
-    "voice-detection",
-    "deepfake-detection",
-    "gemini-api",
-    "react"
-  ]
+  }
 }

@@ -4,7 +4,6 @@ import { detectVoice } from '../services/geminiService';
 import { DetectionRequest, DetectionResponse, AudioFormat } from '../types';
 
 const Sandbox: React.FC = () => {
-  const [apiKey, setApiKey] = useState('test_key_abc_123');
   const [language, setLanguage] = useState('en-US');
   const [audioFormat, setAudioFormat] = useState<AudioFormat>('mp3');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -85,7 +84,7 @@ const Sandbox: React.FC = () => {
         const base64String = (reader.result as string).split(',')[1];
         const payload: DetectionRequest = {
           language,
-          audio_format: 'wav', // We use 'wav' as a generic label, service handles base64 content
+          audio_format: 'wav', 
           audio_base64: base64String
         };
         const result = await detectVoice(payload);
@@ -135,52 +134,46 @@ const Sandbox: React.FC = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in duration-700">
       <div className="space-y-6">
         <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 shadow-xl">
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
-            <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Configuration
-          </h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Simulation API Key</label>
-              <input 
-                type="text" 
-                value={apiKey} 
-                onChange={(e) => setApiKey(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-slate-300"
-              />
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-white">
+              <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Configuration
+            </h3>
+            <div className="flex items-center gap-1.5 bg-cyan-950/30 px-2 py-1 rounded-md border border-cyan-800/50">
+               <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
+               <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">System Ready</span>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Target Language</label>
-                <select 
-                  value={language} 
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-slate-300"
-                >
-                  <option value="en-US">English (US)</option>
-                  <option value="hi-IN">Hindi</option>
-                  <option value="te-IN">Telugu (Regional)</option>
-                  <option value="ml-IN">Malayalam (Regional)</option>
-                  <option value="ta-IN">Tamil</option>
-                  <option value="es-ES">Spanish</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Upload Format</label>
-                <select 
-                  value={audioFormat} 
-                  onChange={(e) => setAudioFormat(e.target.value as AudioFormat)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-slate-300"
-                >
-                  <option value="mp3">MP3</option>
-                  <option value="wav">WAV</option>
-                </select>
-              </div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Target Language</label>
+              <select 
+                value={language} 
+                onChange={(e) => setLanguage(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-slate-300"
+              >
+                <option value="en-US">English (US)</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="te-IN">Telugu (Regional)</option>
+                <option value="ml-IN">Malayalam (Regional)</option>
+                <option value="ta-IN">Tamil</option>
+                <option value="es-ES">Spanish</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Preferred Encoding</label>
+              <select 
+                value={audioFormat} 
+                onChange={(e) => setAudioFormat(e.target.value as AudioFormat)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all text-slate-300"
+              >
+                <option value="mp3">Compressed (MP3)</option>
+                <option value="wav">Lossless (WAV)</option>
+              </select>
             </div>
           </div>
         </div>
@@ -295,13 +288,13 @@ const Sandbox: React.FC = () => {
             {response && (
               <div className="animate-in fade-in zoom-in-95 duration-500 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
+                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 shadow-inner">
                     <p className="text-[10px] uppercase font-black text-slate-500 mb-1 tracking-widest">Classification</p>
                     <p className={`text-2xl font-black ${response.prediction === 'AI_GENERATED' ? 'text-orange-500' : 'text-cyan-400'}`}>
                       {response.prediction.replace('_', ' ')}
                     </p>
                   </div>
-                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
+                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 shadow-inner">
                     <p className="text-[10px] uppercase font-black text-slate-500 mb-1 tracking-widest">Confidence</p>
                     <p className="text-2xl font-black text-white">
                       {(response.confidence * 100).toFixed(2)}%
