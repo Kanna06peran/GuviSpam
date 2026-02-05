@@ -12,7 +12,7 @@ const Documentation: React.FC = () => {
         </p>
         <CodeBlock 
           language="http"
-          code={`GET /v1/detect HTTP/1.1\nHost: api.voiceshield.ai\nx-api-key: YOUR_SECRET_API_KEY`}
+          code={`POST /v1/detect HTTP/1.1\nHost: api.voiceshield.ai\nx-api-key: YOUR_SECRET_API_KEY`}
         />
       </section>
 
@@ -23,62 +23,48 @@ const Documentation: React.FC = () => {
             <span className="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-bold uppercase">POST</span>
             <code className="text-slate-200">/v1/detect</code>
           </div>
-          <p className="text-sm text-slate-400">Classifies whether an audio sample is AI-generated or Human-generated.</p>
+          <p className="text-sm text-slate-400">Analyzes audio forensics to classify voice authenticity.</p>
         </div>
 
-        <h3 className="text-lg font-semibold mb-3 text-slate-200">Request Body</h3>
+        <h3 className="text-lg font-semibold mb-3 text-slate-200">Request Body (JSON)</h3>
         <CodeBlock 
           language="json"
           code={`{
   "language": "en-US",
   "audio_format": "mp3",
-  "audio_base64": "SGVsbG8gd29ybGQuLi4=" // Base64 encoded audio
+  "audio_base64": "UklGRuY6AABXQVZFZm10IBIAAAABAAEARKwAAIhYA..." 
 }`}
         />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div>
-            <h4 className="text-sm font-bold uppercase text-slate-500 mb-2">Properties</h4>
-            <ul className="space-y-3">
-              <li className="flex flex-col">
-                <span className="text-cyan-300 font-mono">language <span className="text-slate-500 font-sans text-xs">(string)</span></span>
-                <span className="text-xs text-slate-400">The primary language spoken in the audio.</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="text-cyan-300 font-mono">audio_format <span className="text-slate-500 font-sans text-xs">(enum)</span></span>
-                <span className="text-xs text-slate-400">The file encoding: "mp3" or "wav".</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="text-cyan-300 font-mono">audio_base64 <span className="text-slate-500 font-sans text-xs">(string)</span></span>
-                <span className="text-xs text-slate-400">The raw audio data in Base64 format.</span>
-              </li>
-            </ul>
-          </div>
-        </div>
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-cyan-400">Response Formats</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <h2 className="text-2xl font-bold mb-4 text-cyan-400">Response Format</h2>
+        <p className="text-sm text-slate-400 mb-4">The API returns a structured JSON object containing classification and forensic reasoning.</p>
+        <div className="grid grid-cols-1 gap-6">
           <div>
-            <h3 className="text-md font-semibold mb-2 text-green-400">Success (200 OK)</h3>
+            <h3 className="text-md font-semibold mb-2 text-green-400">Success Schema (200 OK)</h3>
             <CodeBlock 
               language="json"
               code={`{
   "status": "success",
   "prediction": "AI_GENERATED",
-  "confidence": 0.98
+  "confidence": 0.942,
+  "details": {
+    "reasoning": "Detected high-frequency spectral repetition and unnatural lack of sibilance micro-variations consistent with neural vocoding artifacts.",
+    "detected_language": "en-US"
+  }
 }`}
             />
           </div>
           <div>
-            <h3 className="text-md font-semibold mb-2 text-red-400">Error (401 Unauthorized)</h3>
+            <h3 className="text-md font-semibold mb-2 text-red-400">Error Schema (429/401)</h3>
             <CodeBlock 
               language="json"
               code={`{
   "status": "error",
-  "code": "AUTH_INVALID",
-  "message": "The provided API key is invalid or expired."
+  "prediction": "HUMAN",
+  "confidence": 0,
+  "message": "API Rate Limit Exceeded: You've reached the Gemini API quota."
 }`}
             />
           </div>

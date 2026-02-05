@@ -2,23 +2,52 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { DetectionRequest, DetectionResponse } from "../types";
 
-const MODEL_NAME = 'gemini-3-flash-preview';
+const MODEL_NAME = 'gemini-3-pro-preview';
+
+/**
+ * Performs a lightweight diagnostic check to verify API key validity and quota.
+ */
+export const validateApiKey = async (): Promise<{ status: 'valid' | 'invalid' | 'quota_exceeded' | 'error', message?: string }> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  try {
+    // Smallest possible request to check connectivity
+    await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: 'ok',
+      config: { maxOutputTokens: 1 }
+    });
+    return { status: 'valid' };
+  } catch (error: any) {
+    const errorStr = JSON.stringify(error).toLowerCase();
+    if (errorStr.includes('401') || errorStr.includes('invalid') || errorStr.includes('key')) {
+      return { status: 'invalid', message: 'The provided API key is invalid or has been revoked.' };
+    }
+    if (errorStr.includes('429') || errorStr.includes('quota') || errorStr.includes('resource_exhausted')) {
+      return { status: 'quota_exceeded', message: 'API Quota Exceeded. Please check your billing at ai.google.dev.' };
+    }
+    return { status: 'error', message: error.message || 'Unknown connectivity error.' };
+  }
+};
 
 export const detectVoice = async (request: DetectionRequest): Promise<DetectionResponse> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
-    // Determine MIME type based on format or provided type
     let mimeType = 'audio/mpeg';
     if (request.audio_format === 'wav') mimeType = 'audio/wav';
+    
+    let base64Data = request.audio_base64;
     if (request.audio_base64.startsWith('data:')) {
-      // If it's a data URI, extract the mime type
       const match = request.audio_base64.match(/^data:([^;]+);base64,/);
       if (match) mimeType = match[1];
+      base64Data = request.audio_base64.replace(/^data:[^;]+;base64,/, '');
     }
-    
-    // Clean base64 data if it contains a prefix
-    const base64Data = request.audio_base64.replace(/^data:[^;]+;base64,/, '');
+
+    const lessonsLearned = request.past_corrections?.length 
+      ? `\nLESSONS LEARNED FROM PAST MISTAKES (Avoid repeating these errors):\n${request.past_corrections.map((c, i) => 
+          `${i+1}. Previously predicted ${c.original_prediction} but it was actually ${c.actual_label}. Analysis of failure: ${c.reasoning_of_failure}`
+        ).join('\n')}`
+      : '';
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
@@ -32,26 +61,26 @@ export const detectVoice = async (request: DetectionRequest): Promise<DetectionR
               }
             },
             {
-              text: `SYSTEM ROLE: Forensic Audio Analyst
-              TASK: Determine if the provided audio is AI-GENERATED (TTS/Voice Clone) or HUMAN.
+              text: `SYSTEM ROLE: Expert Forensic Audio & Linguistic Analyst.
+              TASK: Conduct a deep-layer analysis to distinguish between AUTHENTIC HUMAN SPEECH and AI-GENERATED (Synthetic/Deepfake) audio.
               
-              CONTEXT: 
-              - Language: ${request.language}
-              - Focus: Look for "robotic" cadence, lack of emotional micro-fluctuations, and spectral discontinuities.
-              
-              REGIONAL ANALYSIS (CRITICAL):
-              If the language is Telugu (te-IN) or Malayalam (ml-IN), specifically examine:
-              1. Retroflex Consonants (ట, డ, ణ / ട, ഡ, ണ): Synthetic voices often fail to produce the distinct 'tongue curl' acoustics.
-              2. Vowel Sandhi: Check for natural fluid transitions between words.
-              3. Aspirated sounds: AI often makes these too uniform or skips the breathy quality.
+              CONTEXT:
+              - Target Language: ${request.language}
+              - Modality: Audio Forensic Analysis
+              ${lessonsLearned}
 
-              OUTPUT: You MUST respond with a valid JSON object.
-              {
-                "prediction": "AI_GENERATED" | "HUMAN",
-                "confidence": number (0-1),
-                "reasoning": "Explain acoustic markers found",
-                "detected_language": "Specific locale found"
-              }`
+              DIAGNOSTIC CRITERIA:
+              1. SPECTRAL ARTIFACTS: Check for "metallic" ringing, pre-echoes, or unnatural silence between phonemes.
+              2. PROSODY & CADENCE: Human speech has micro-hesitations. AI often fails at natural emotional inflections or micro-rhythms.
+              3. BREATHING PATTERNS: Are breaths missing or perfectly timed?
+              4. FORMANTS: In AI clones, formant transitions can appear "smeared".
+              
+              OUTPUT FORMAT:
+              You MUST return a JSON object with:
+              - prediction: "AI_GENERATED" if you detect synthetic markers, "HUMAN" otherwise.
+              - confidence: Score 0.0 to 1.0.
+              - reasoning: Detailed explanation of markers detected.
+              - detected_language: Locale detected.`
             }
           ]
         }
@@ -82,13 +111,61 @@ export const detectVoice = async (request: DetectionRequest): Promise<DetectionR
         detected_language: result.detected_language
       }
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Detection Error:", error);
+    
+    let message = "Analysis failed. Please try again.";
+    const errorStr = JSON.stringify(error).toLowerCase();
+    if (errorStr.includes('429') || errorStr.includes('resource_exhausted') || errorStr.includes('quota')) {
+      message = "API Rate Limit Exceeded: You've reached the Gemini API quota. Please wait a moment or check your billing plan at ai.google.dev.";
+    } else if (errorStr.includes('401') || (errorStr.includes('invalid') && errorStr.includes('key'))) {
+      message = "Invalid API Key: Please verify your neural link configuration.";
+    } else if (error.message) {
+      message = error.message;
+    }
+
     return {
       status: 'error',
       prediction: 'HUMAN',
       confidence: 0,
-      message: error instanceof Error ? error.message : "Failed to analyze audio sample."
+      message: message
     };
+  }
+};
+
+export const calibrateModel = async (
+  audioBase64: string, 
+  originalResponse: DetectionResponse, 
+  actualLabel: string
+): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: [
+        {
+          parts: [
+            { inlineData: { data: audioBase64.replace(/^data:[^;]+;base64,/, ''), mimeType: 'audio/wav' } },
+            {
+              text: `DEBUGGING TASK: You previously analyzed this audio and predicted it was ${originalResponse.prediction} with reasoning: "${originalResponse.details?.reasoning}".
+              
+              THE USER HAS FLAGGED THIS AS INCORRECT. The actual label is: ${actualLabel}.
+              
+              Please re-examine the audio and identify the specific subtle forensic markers you missed that prove it is ${actualLabel}. Summarize the "lesson learned" in one concise sentence so we can avoid this mistake in the future.`
+            }
+          ]
+        }
+      ]
+    });
+
+    return response.text || "Unidentified processing artifact.";
+  } catch (error: any) {
+    console.error("Calibration Error:", error);
+    const errorStr = JSON.stringify(error).toLowerCase();
+    if (errorStr.includes('429')) {
+      return "Calibration failed due to API rate limits. Please try again later.";
+    }
+    return "Error calibrating model.";
   }
 };

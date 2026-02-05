@@ -1,10 +1,17 @@
 
 export type AudioFormat = 'mp3' | 'wav';
 
+export interface Correction {
+  original_prediction: string;
+  actual_label: string;
+  reasoning_of_failure: string;
+}
+
 export interface DetectionRequest {
   language: string;
   audio_format: AudioFormat;
   audio_base64: string;
+  past_corrections?: Correction[];
 }
 
 export interface DetectionResponse {
@@ -26,7 +33,5 @@ export interface ApiError {
 
 export enum AppTab {
   OVERVIEW = 'OVERVIEW',
-  DOCS = 'DOCS',
-  SANDBOX = 'SANDBOX',
-  BACKEND_CODE = 'BACKEND_CODE'
+  SANDBOX = 'SANDBOX'
 }

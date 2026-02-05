@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
 import { AppTab } from './types.ts';
-import Documentation from './components/Documentation.tsx';
 import Sandbox from './components/Sandbox.tsx';
-import BackendImplementation from './components/BackendImplementation.tsx';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.OVERVIEW);
@@ -21,21 +19,19 @@ const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight text-white">VOICESHIELD <span className="text-cyan-400">AI</span></h1>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection API v1.1.0</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection Engine v1.1.0</p>
             </div>
           </div>
 
           <nav className="flex items-center bg-slate-900/50 p-1 rounded-full border border-slate-800">
             {[
               { id: AppTab.OVERVIEW, label: 'Overview' },
-              { id: AppTab.DOCS, label: 'Documentation' },
-              { id: AppTab.SANDBOX, label: 'Sandbox' },
-              { id: AppTab.BACKEND_CODE, label: 'Backend Code' }
+              { id: AppTab.SANDBOX, label: 'Sandbox' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-6 py-1.5 rounded-full text-xs font-bold transition-all ${
                   activeTab === tab.id 
                   ? 'bg-cyan-600 text-white shadow-md' 
                   : 'text-slate-400 hover:text-slate-200'
@@ -54,28 +50,22 @@ const App: React.FC = () => {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="max-w-3xl mb-12">
               <h2 className="text-4xl font-extrabold text-white mb-6 leading-tight">
-                Detect Synthetic Voices with <span className="text-cyan-400">Regional Precision</span>.
+                Detect Synthetic Voices with <span className="text-cyan-400">Neural Precision</span>.
               </h2>
               <p className="text-lg text-slate-400 leading-relaxed mb-8">
                 VoiceShield provides state-of-the-art AI detection for audio content. 
-                Our API now features enhanced linguistic training for <strong>Telugu and Malayalam</strong>, alongside 
-                robust coverage for global locales.
+                Our engine features specialized linguistic training for multi-dialectal analysis, 
+                distinguishing subtle forensic markers in both global and regional speech.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button 
                   onClick={() => setActiveTab(AppTab.SANDBOX)}
-                  className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg font-bold transition-all flex items-center gap-2 group"
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-xl font-black transition-all flex items-center gap-2 group shadow-xl shadow-cyan-600/20"
                 >
-                  Start Testing
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  START DETECTION SANDBOX
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
-                </button>
-                <button 
-                  onClick={() => setActiveTab(AppTab.DOCS)}
-                  className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg font-bold transition-all"
-                >
-                  Read API Docs
                 </button>
               </div>
             </div>
@@ -88,7 +78,7 @@ const App: React.FC = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Low Latency</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Average response time of &lt;150ms for typical audio clips.</p>
+                <p className="text-sm text-slate-400 leading-relaxed">Average response time of &lt;150ms for typical audio clips via high-performance neural clusters.</p>
               </div>
 
               <div className="bg-slate-900/40 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition-colors group">
@@ -98,7 +88,7 @@ const App: React.FC = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Multilingual</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Built-in support for 40+ global languages including specialized Telugu and Malayalam training.</p>
+                <p className="text-sm text-slate-400 leading-relaxed">Support for 40+ global languages including specialized regional training for high-accuracy local detection.</p>
               </div>
 
               <div className="bg-slate-900/40 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition-colors group">
@@ -108,20 +98,18 @@ const App: React.FC = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">High Confidence</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Strict JSON validation with detailed confidence scoring for evaluation.</p>
+                <p className="text-sm text-slate-400 leading-relaxed">Detailed confidence scoring with deep forensic reasoning provided for every classification.</p>
               </div>
             </div>
           </div>
         )}
 
-        {activeTab === AppTab.DOCS && <Documentation />}
         {activeTab === AppTab.SANDBOX && <Sandbox />}
-        {activeTab === AppTab.BACKEND_CODE && <BackendImplementation />}
       </main>
 
       <footer className="border-t border-slate-900 py-8 px-6 text-center">
         <p className="text-slate-600 text-xs">
-          &copy; 2024 VoiceShield AI. Prepared for GUVI–HCL API Endpoint Evaluation.
+          &copy; 2024 VoiceShield AI. Prepared for GUVI–HCL AI Evaluation System.
         </p>
       </footer>
     </div>
