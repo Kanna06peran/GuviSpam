@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { AppTab } from './types.ts';
 import Sandbox from './components/Sandbox.tsx';
+import EndpointTester from './components/EndpointTester.tsx';
+import Documentation from './components/Documentation.tsx';
+import BackendImplementation from './components/BackendImplementation.tsx';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.OVERVIEW);
@@ -19,14 +22,15 @@ const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight text-white">VOICESHIELD <span className="text-cyan-400">AI</span></h1>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection Engine v1.1.0</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection Engine v1.2.0</p>
             </div>
           </div>
 
           <nav className="flex items-center bg-slate-900/50 p-1 rounded-full border border-slate-800">
             {[
               { id: AppTab.OVERVIEW, label: 'Overview' },
-              { id: AppTab.SANDBOX, label: 'Sandbox' }
+              { id: AppTab.SANDBOX, label: 'Sandbox' },
+              { id: AppTab.TESTER, label: 'Endpoint Tester' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -48,68 +52,93 @@ const App: React.FC = () => {
       <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-12">
         {activeTab === AppTab.OVERVIEW && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="max-w-3xl mb-12">
-              <h2 className="text-4xl font-extrabold text-white mb-6 leading-tight">
-                Detect Synthetic Voices with <span className="text-cyan-400">Neural Precision</span>.
+            <div className="max-w-4xl mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-6">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
+                <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">HCL-GUVI Final Evaluation Specs</span>
+              </div>
+              <h2 className="text-5xl font-extrabold text-white mb-6 leading-tight tracking-tighter">
+                AI Voice Detection <span className="text-cyan-400">Endpoint Protocol</span>.
               </h2>
-              <p className="text-lg text-slate-400 leading-relaxed mb-8">
-                VoiceShield provides state-of-the-art AI detection for audio content. 
-                Our engine features specialized linguistic training for multi-dialectal analysis, 
-                distinguishing subtle forensic markers in both global and regional speech.
+              <p className="text-lg text-slate-400 leading-relaxed mb-8 max-w-2xl">
+                The requirements for the final submission have been updated. Ensure your API follows the path, authentication key, and response structure below.
               </p>
+              
+              {/* Mandatory Specifications Card */}
+              <div className="bg-slate-900/40 border-2 border-slate-800 rounded-3xl p-8 mb-12 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                   <svg className="w-24 h-24 text-cyan-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                </div>
+                
+                <h3 className="text-lg font-black text-white uppercase tracking-tighter mb-8 flex items-center gap-2">
+                  Evaluation Requirements Checklist
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Endpoint URL</p>
+                    <code className="text-cyan-400 font-bold">/detect-voice</code>
+                  </div>
+                  <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Header Key</p>
+                    <code className="text-cyan-400 font-bold">x-api-key</code>
+                  </div>
+                  <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Access Key Value</p>
+                    <code className="text-cyan-400 font-bold">A9f3KpL0XzQm2026</code>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">JSON Request Fields</h4>
+                    <ul className="space-y-2 text-sm text-slate-400">
+                      <li className="flex justify-between"><span>language</span> <span className="text-slate-100 italic">"en-US"</span></li>
+                      <li className="flex justify-between"><span>audio_format</span> <span className="text-slate-100 italic">"mp3"</span></li>
+                      <li className="flex justify-between"><span>audio_base64</span> <span className="text-slate-100 italic">"base64..."</span></li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">JSON Response Fields</h4>
+                    <ul className="space-y-2 text-sm text-slate-400">
+                      <li className="flex justify-between"><span>prediction</span> <span className="text-emerald-400">"HUMAN"</span></li>
+                      <li className="flex justify-between"><span>confidence</span> <span className="text-emerald-400">0.90</span></li>
+                      <li className="flex justify-between"><span>message</span> <span className="text-emerald-400">"Analysis complete"</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-4">
                 <button 
                   onClick={() => setActiveTab(AppTab.SANDBOX)}
                   className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-xl font-black transition-all flex items-center gap-2 group shadow-xl shadow-cyan-600/20"
                 >
-                  START DETECTION SANDBOX
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+                  USE DETECTION SANDBOX
+                </button>
+                <button 
+                  onClick={() => setActiveTab(AppTab.TESTER)}
+                  className="bg-slate-900 hover:bg-slate-800 text-slate-200 px-8 py-4 rounded-xl font-black transition-all border border-slate-700"
+                >
+                  TEST YOUR DEPLOYED API
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-              <div className="bg-slate-900/40 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition-colors group">
-                <div className="w-12 h-12 bg-cyan-900/30 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">Low Latency</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Average response time of &lt;150ms for typical audio clips via high-performance neural clusters.</p>
-              </div>
-
-              <div className="bg-slate-900/40 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition-colors group">
-                <div className="w-12 h-12 bg-purple-900/30 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">Multilingual</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Support for 40+ global languages including specialized regional training for high-accuracy local detection.</p>
-              </div>
-
-              <div className="bg-slate-900/40 p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition-colors group">
-                <div className="w-12 h-12 bg-green-900/30 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">High Confidence</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">Detailed confidence scoring with deep forensic reasoning provided for every classification.</p>
-              </div>
+            <div className="mt-20">
+               <h3 className="text-xl font-black text-white uppercase tracking-widest mb-8 border-l-4 border-cyan-500 pl-4">Implementation Guides</h3>
+               <BackendImplementation />
             </div>
           </div>
         )}
 
         {activeTab === AppTab.SANDBOX && <Sandbox />}
+        {activeTab === AppTab.TESTER && <EndpointTester />}
       </main>
 
       <footer className="border-t border-slate-900 py-8 px-6 text-center">
         <p className="text-slate-600 text-xs">
-          VoiceShield AI
+          &copy; 2024 VoiceShield AI. Prepared for GUVI–HCL AI Evaluation System.
         </p>
       </footer>
     </div>

@@ -33,5 +33,6 @@ export interface ApiError {
 
 export enum AppTab {
   OVERVIEW = 'OVERVIEW',
-  SANDBOX = 'SANDBOX'
+  SANDBOX = 'SANDBOX',
+  TESTER = 'TESTER'
 }

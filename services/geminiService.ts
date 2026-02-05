@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { DetectionRequest, DetectionResponse } from "../types.ts";
+import { DetectionRequest, DetectionResponse } from "../types";
 
 const MODEL_NAME = 'gemini-3-pro-preview';
 
