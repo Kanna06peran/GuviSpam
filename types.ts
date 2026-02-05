@@ -16,7 +16,7 @@ export interface DetectionRequest {
 
 export interface DetectionResponse {
   status: 'success' | 'error';
-  prediction: 'AI_GENERATED' | 'HUMAN';
+  prediction: 'AI_GENERATED' | 'HUMAN' | 'NOT_FRAUD';
   confidence: number;
   message?: string;
   details?: {

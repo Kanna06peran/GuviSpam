@@ -22,7 +22,7 @@ const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight text-white">VOICESHIELD <span className="text-cyan-400">AI</span></h1>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection Engine v1.2.0</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Detection Engine v1.2.5</p>
             </div>
           </div>
 
@@ -61,7 +61,7 @@ const App: React.FC = () => {
                 AI Voice Detection <span className="text-cyan-400">Endpoint Protocol</span>.
               </h2>
               <p className="text-lg text-slate-400 leading-relaxed mb-8 max-w-2xl">
-                The requirements for the final submission have been updated. Ensure your API follows the path, authentication key, and response structure below.
+                The requirements for the final submission are optimized for the provided FastAPI implementation. Use the Endpoint Tester to verify compliance.
               </p>
               
               {/* Mandatory Specifications Card */}
@@ -101,12 +101,22 @@ const App: React.FC = () => {
                   <div>
                     <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">JSON Response Fields</h4>
                     <ul className="space-y-2 text-sm text-slate-400">
-                      <li className="flex justify-between"><span>prediction</span> <span className="text-emerald-400">"HUMAN"</span></li>
+                      <li className="flex justify-between"><span>prediction</span> <span className="text-emerald-400">"NOT_FRAUD" / "AI_GENERATED"</span></li>
                       <li className="flex justify-between"><span>confidence</span> <span className="text-emerald-400">0.90</span></li>
                       <li className="flex justify-between"><span>message</span> <span className="text-emerald-400">"Analysis complete"</span></li>
                     </ul>
                   </div>
                 </div>
+              </div>
+
+              <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 mb-12">
+                 <h4 className="text-xs font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    Environment Setup (Install Dependencies)
+                 </h4>
+                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-sm text-cyan-400">
+                    pip install fastapi uvicorn pydantic python-multipart
+                 </div>
               </div>
 
               <div className="flex flex-wrap gap-4">

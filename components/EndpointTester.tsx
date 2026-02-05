@@ -243,8 +243,7 @@ const EndpointTester: React.FC = () => {
                       <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Compliance Audit</h4>
                       <div className="space-y-2">
                         {[
-                          { key: 'status', label: 'Field: status' },
-                          { key: 'prediction', label: 'Field: prediction (HUMAN/AI_GENERATED)' },
+                          { key: 'prediction', label: 'Field: prediction (HUMAN/AI_GENERATED/NOT_FRAUD)' },
                           { key: 'confidence', label: 'Field: confidence (number 0-1)' }
                         ].map(field => (
                           <div key={field.key} className="flex items-center justify-between text-[10px]">
