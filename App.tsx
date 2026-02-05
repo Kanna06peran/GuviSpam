@@ -109,7 +109,7 @@ const App: React.FC = () => {
 
       <footer className="border-t border-slate-900 py-8 px-6 text-center">
         <p className="text-slate-600 text-xs">
-          &copy; 2024 VoiceShield AI. Prepared for GUVI–HCL AI Evaluation System.
+          VoiceShield AI
         </p>
       </footer>
     </div>
